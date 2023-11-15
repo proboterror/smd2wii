@@ -151,27 +151,27 @@ int main()
 
 		gamepads_query();
 
-		a = nes1.a || nes2.a || nes3.a || snes1.a || smd1.c || n64_1.a || dualshock1.circle;
-		b = nes1.b || nes2.b || nes3.b || snes1.b || smd1.b || n64_1.b || dualshock1.cross;
-		x = snes1.x || smd1.y || dualshock1.triangle;
-		y = snes1.y || smd1.a || dualshock1.square;
-		l = snes1.l || smd1.x || n64_1.l || dualshock1.l1;
-		r = snes1.r || smd1.z || n64_1.r || dualshock1.r1;
-		select = nes1.select || nes2.select || nes3.select || snes1.select || smd1.mode || dualshock1.select;
-		start = nes1.start || nes2.start || nes3.start || snes1.start || smd1.start || n64_1.start || dualshock1.start;
-		zl = n64_1.z || dualshock1.l2;
-		zr = dualshock1.r2;
+		a = smd1.c;
+		b = smd1.b;
+		x = smd1.y;
+		y = smd1.a;
+		l = smd1.x;
+		r = smd1.z;
+		select = smd1.mode;
+		start = smd1.start;
+		zl = 0;
+		zr = 0;
 
-		uint8_t tmp_up = n64_1.up || dualshock1.up;
-		uint8_t tmp_down = n64_1.down || dualshock1.down;
-		uint8_t tmp_left = n64_1.left || dualshock1.left;
-		uint8_t tmp_right = n64_1.right || dualshock1.right;
+		uint8_t tmp_up = 0;
+		uint8_t tmp_down = 0;
+		uint8_t tmp_left = 0;
+		uint8_t tmp_right = 0;
 		if (dpad_mode == DPAD_MODE_BOTH || dpad_mode == DPAD_MODE_DPAD)
 		{
-			tmp_up |= nes1.up || nes2.up || nes3.up || snes1.up || smd1.up;
-			tmp_down |= nes1.down || nes2.down || nes3.down || snes1.down || smd1.down;
-			tmp_left |= nes1.left || nes2.left || nes3.left || snes1.left || smd1.left;
-			tmp_right |= nes1.right || nes2.right || nes3.right || snes1.right || smd1.right;
+			tmp_up |= smd1.up;
+			tmp_down |= smd1.down;
+			tmp_left |= smd1.left;
+			tmp_right |= smd1.right;
 		}
 		up = tmp_up;
 		down = tmp_down;
@@ -184,31 +184,15 @@ int main()
 		int temp_ry = 0;
 		if (dpad_mode == DPAD_MODE_BOTH || dpad_mode == DPAD_MODE_STICK)
 		{
-			if (nes1.up || nes2.up || nes3.up || snes1.up || smd1.up)
+			if (smd1.up)
 				temp_jy = -127;
-			if (nes1.down || nes2.down || nes3.down || snes1.down || smd1.down)
+			if (smd1.down)
 				temp_jy = 127;
-			if (nes1.left || nes2.left || nes3.left || snes1.left || smd1.left)
+			if (smd1.left)
 				temp_jx = -127;
-			if (nes1.right || nes2.right || nes3.right || snes1.right || smd1.right)
+			if (smd1.right)
 				temp_jx = 127;
 		}
-		temp_jx = ABSMAX(temp_jx, n64_1.x * 80 / 30);
-		temp_jy = ABSMAX(temp_jy, n64_1.y * 80 / 30);
-		temp_rx = ABSMAX(temp_rx, n64_1.c_left*-127 + n64_1.c_right*127);
-		temp_ry = ABSMAX(temp_ry, n64_1.c_up*-127 + n64_1.c_down*127);
-		temp_jx = ABSMAX(temp_jx, dualshock1.lx);
-		temp_jy = ABSMAX(temp_jy, dualshock1.ly);
-		temp_rx = ABSMAX(temp_rx, dualshock1.rx);
-		temp_ry = ABSMAX(temp_ry, dualshock1.ry);
-		if (temp_jx > 127) temp_jx = 127;
-		if (temp_jx < -127) temp_jx = -127;
-		if (temp_jy > 127) temp_jy = 127;
-		if (temp_jy < -127) temp_jy = -127;
-		if (temp_rx > 127) temp_rx = 127;
-		if (temp_rx < -127) temp_rx = -127;
-		if (temp_ry > 127) temp_ry = 127;
-		if (temp_ry < -127) temp_ry = -127;
 
 		jx = temp_jx;
 		jy = temp_jy;
