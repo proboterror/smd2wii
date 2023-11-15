@@ -1,5 +1,4 @@
-#ifndef _NES2WII_H_
-#define _NES2WII_H_
+#pragma once
 
 #include "defines.h"
 
@@ -35,5 +34,3 @@
 #define DPAD_MODE_BOTH 0
 #define DPAD_MODE_STICK 1
 #define DPAD_MODE_DPAD 2
-
-#endif

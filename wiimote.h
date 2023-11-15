@@ -1,4 +1,4 @@
-#ifndef wiimote_h
+#pragma once
 
 #include "defines.h"
 #include <string.h>
@@ -15,6 +15,3 @@ void wm_init(unsigned char *, unsigned char *, void (*)(void));
 
 // set button data
 void wm_newaction(unsigned char *);
-
-#define wiimote_h
-#endif

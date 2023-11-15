@@ -1,5 +1,4 @@
-#ifndef _DEFINES_H_
-#define _DEFINES_H_
+#pragma once
 
 //#define F_CPU 8000000L
 
@@ -26,5 +25,3 @@
 #define GREEN_LED_PIN 1
 
 #define DEAD_ZONE 32
-
-#endif

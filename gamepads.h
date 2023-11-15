@@ -1,5 +1,4 @@
-#ifndef _GAMEPAD_H_
-#define _GAMEPAD_H_
+#pragma once
 
 #include <inttypes.h>
 #include "defines.h"
@@ -8,8 +7,6 @@
 #define DDR(p) GLUE(DDR,p)
 #define PORT(p) GLUE(PORT,p)
 #define PIN(p) GLUE(PIN,p)
-
-#define WAIT(t) {TCNT0=0; while(TCNT0 < (F_CPU / 1000000UL) * t);}
 
 void gamepads_init();
 void gamepads_query();
@@ -20,4 +17,3 @@ struct smd_state {
 
 extern struct smd_state smd1;
 
-#endif
