@@ -1,5 +1,6 @@
 #include "defines.h"
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include <string.h>
 #include <stdbool.h>
@@ -39,11 +40,19 @@ void gamepads_query()
 
 	PORT(SMD_SELECT_PORT) |= (1 << SMD_SELECT_PIN);
 
+	// Fixed: wiimote communication interrupt can interfere and break 6-button pad poll timings.
+	// ToDo: for minimal latency / communication issues consider interrupt synchronisation strategy
+	// described in https://github.com/jnwatts/X2WII/blob/master/SW/main.c
+	// (postpone controller poll to wiimote I2C read interrupt, 
+	// taking account on Wiimote classic controller poll rate (100/200Hz))
+	cli();
+
 	// Fixed: 8 iterations for read controller state.
 	for (b = 0; b < 8; b++)
 	{
+		// Note: were can be enough CPU ticks in loop cycle without additional delay (8MHz, unoptimized loop).
 		//_delay_us(10); // short delay to stabilise outputs in controller
-		// Note: do not sleep between sequential reads (breaks 6-button pad detection).
+
 		sega_d1[b] = ((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN0)&1)
 			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN1)&1) << 1)
 			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN2)&1) << 2)
@@ -54,6 +63,8 @@ void gamepads_query()
 
 		PORT(SMD_SELECT_PORT) ^= (1 << SMD_SELECT_PIN);
 	}
+
+	sei();
 
 	smd1.connected = !(sega_d1[1] & 0b001100);
 
