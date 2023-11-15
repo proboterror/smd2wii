@@ -1,6 +1,6 @@
 PRG            = nes2wii
 OBJ            = main.o wiimote.o gamepads.o
-LFUSE          = FF
+LFUSE          = C4
 HFUSE          = D9
 MCU_PROGRAMMER = m16
 PROGRAMMER_TYPE = avrisp2
@@ -16,7 +16,7 @@ PROGRAMMER_PORT = usb
 #MCU_TARGET     = atmega128
 #MCU_TARGET     = atmega1280
 #MCU_TARGET     = atmega1281
-MCU_TARGET     = atmega16
+#MCU_TARGET     = atmega16
 #MCU_TARGET     = atmega163
 #MCU_TARGET     = atmega164p
 #MCU_TARGET     = atmega165
@@ -39,7 +39,7 @@ MCU_TARGET     = atmega16
 #MCU_TARGET     = atmega6450
 #MCU_TARGET     = atmega649
 #MCU_TARGET     = atmega6490
-#MCU_TARGET     = atmega8
+MCU_TARGET     = atmega8
 #MCU_TARGET     = atmega8515
 #MCU_TARGET     = atmega8535
 #MCU_TARGET     = atmega88
@@ -54,9 +54,9 @@ MCU_TARGET     = atmega16
 #MCU_TARGET     = attiny84
 #MCU_TARGET     = attiny85
 #MCU_TARGET     = attiny861
-OPTIMIZE       = -O2
+OPTIMIZE       = -Os
 
-DEFS           =
+DEFS           = -DF_CPU=8000000L
 LIBS           =
 
 # You should not have to change anything below here.
