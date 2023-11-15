@@ -198,8 +198,6 @@ int main()
 		jy = temp_jy;
 		rx = temp_rx;
 		ry = temp_ry;
-		
-		_delay_ms(1);
 
 		// Need to switch mode? Hold Start+A+B for a second
 		static uint16_t time = 0;
