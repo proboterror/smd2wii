@@ -1,4 +1,4 @@
-PRG            = nes2wii
+PRG            = smd2wii
 OBJ            = main.o wiimote.o gamepads.o
 LFUSE          = C4
 HFUSE          = D9
