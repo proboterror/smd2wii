@@ -52,7 +52,7 @@ There are three modes for controller d-pad:
 * Mode #3 - d-pad works as d-pad only
 Mode 3 selected by default.
 
-You can hold Start+A+B for a few seconds to change mode. Red led will blink 1/2/3 times indicating new mode.
+You can hold Start+B+C for a few seconds to change mode. Red led will blink 1/2/3 times indicating new mode.
 
 ## Bill of materials
 * ATMEGA8A-U TQFP32
