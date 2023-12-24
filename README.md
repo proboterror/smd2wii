@@ -50,7 +50,8 @@ There are three modes for controller d-pad:
 * Mode #1 - d-pad works as left analog stick and d-pad on classic controller at the same time
 * Mode #2 - d-pad works as left analog stick only
 * Mode #3 - d-pad works as d-pad only
-Mode 3 selected by default.
+
+Mode 1 selected by default.
 
 You can hold Start+B+C for a few seconds to change mode. Red led will blink 1/2/3 times indicating new mode.
 
