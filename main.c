@@ -15,7 +15,7 @@ volatile uint8_t tl = 0, tr = 0;
 volatile uint8_t left = 0, right = 0, up = 0, down = 0, a = 0, b = 0, x = 0, y = 0, 
 				select = 0, start = 0, home = 0, l = 0, r = 0, zl = 0, zr = 0;
 volatile uint8_t connected = 0;
-volatile uint8_t dpad_mode = DPAD_MODE_DPAD;
+volatile uint8_t dpad_mode = DPAD_MODE_BOTH;
 
 // calibration data
 const unsigned char cal_data[32] = {
@@ -136,7 +136,7 @@ int main()
 	GREEN_LED_PORT_DDR |= (1<<GREEN_LED_PIN); // Red led, output
 	gamepads_init();
 	dpad_mode = eeprom_read_byte((void*)0); // current mode
-	if (dpad_mode > 2) dpad_mode = DPAD_MODE_DPAD; // d-pad works as d-pad only by default
+	if (dpad_mode > 2) dpad_mode = DPAD_MODE_BOTH;
 
 	wm_init((void*)classic_controller_id, (void*)cal_data, wiimote_query);
 	connected = 1;
