@@ -1,6 +1,4 @@
 # SMD2Wii
-**Warning: prototype PCB currenly in fabrication and not confirmed working. To be updated.**
-
 SMD2Wii - adapter for Sega Mega Drive controller to Wii remote.
 
 Adapter emulates Wii Classic Controller with Sega Mega Drive / Genesis 3/6-button controller and can be used with homebrew emulators like Genesis Plus GX and selected Wii Virtual Console Games.<br>
