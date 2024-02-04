@@ -46,7 +46,17 @@ void gamepads_query()
 	// (postpone controller poll to wiimote I2C read interrupt, 
 	// taking account on Wiimote classic controller poll rate (100/200Hz))
 	cli();
-
+/*
+    Cycle  SEL out D5 in  D4 in  D3 in  D2 in  D1 in  D0 in
+    0      HI      C      B      Right  Left   Down   Up      (Read B, C and directions in this cycle)
+    1      LO      Start  A      0      0      Down   Up      (Check connected and read Start and A in this cycle)
+    2      HI      C      B      Right  Left   Down   Up
+    3      LO      Start  A      0      0      Down   Up
+    4      HI      C      B      Right  Left   Down   Up
+    5      LO      Start  A      0      0      0      0       (Check for six button controller in this cycle (D0 and D1 == LOW))
+    6      HI      C      B      Mode   X      Y      Z       (Read X,Y,Z and Mode in this cycle)
+    7      LO      ---    ---    ---    ---    ---    ---     (Ignored)
+*/
 	// Fixed: 8 iterations for read controller state.
 	for (b = 0; b < 8; b++)
 	{
@@ -103,46 +113,55 @@ void gamepads_query()
 }
 
 /*
-	Ported from:
-	 https://github.com/MickGyver/DaemonBite-Retro-Controllers-USB/blob/master/SegaControllerUSB/SegaController32U4.cpp
-	Original code confirmed working with ATMEGA32U4 based board and third party 6-button SMD controller.
-	However, code below does not detect 6-button controller with 8MHz ATMEGA8A.
-	Note: original code uses only 10 microseconds (µs) delay between setting the select pin and reading the button pins,
-	 which seems to be incorrect (no 6-button pad controller reset delay), but somehow working well in original environment.
-	See also:
-	 https://github.com/jonthysell/SegaController/wiki/How-To-Read-Sega-Controllers
-	 https://github.com/jonthysell/SegaController/blob/master/src/SegaController.cpp
+    Ported from:
+     https://github.com/MickGyver/DaemonBite-Retro-Controllers-USB/blob/master/SegaControllerUSB/SegaController32U4.cpp
+    Original code confirmed working with ATMEGA32U4 based board and third party 6-button SMD controller.
+    However, code below does not detect 6-button controller with 8MHz ATMEGA8A.
+    Note: original code uses only 10 microseconds (µs) delay between setting the select pin and reading the button pins,
+     which seems to be incorrect (no 6-button pad controller reset delay), but somehow working well in original environment.
+    See also:
+     https://github.com/jonthysell/SegaController/wiki/How-To-Read-Sega-Controllers
+     https://github.com/jonthysell/SegaController/blob/master/src/SegaController.cpp
 
-	The 6-Button Controller
-	The logic works as follows:
-	The controller's state is maintained by a counter with 8 values (0-7).
-	-When the select pin changes (HIGH to LOW or LOW to HIGH) the counter increments.
-	-If more than 1.5 ms elapses with no change in the select pin, then the counter resets to 0.
-	-Most games run at 60 frames per second and read the controller only once per frame. Reading just once every 16.6 ms gives enough time for the counter to reset to 0 before the next frame.
-	-The first 4 states (0-3) report buttons like a 3-button controller. Games programmed to read a 3-button controller once per frame still work as expected.
-	-The 5th state (4) reports that the controller is in fact a 6-button controller.
-	-The 6th state (5) reports the buttons X, Y, Z and MODE.
-	-The last two states (6-7) can be ignored for official controllers.
+    Reading the 3-Button Controller:
+    - Output LOW to the select pin.
+    - Read the six input pins according to the table (LOW = the button is being pressed).
+    - Output HIGH to the select pin.
+    - Read the six input pins according to the table (LOW = the button is being pressed).
 
-	Reading the 6-Button Controller
-	-Loop through each state (0-7).
-	-If the state is even, output LOW to the select pin. If it's odd, output HIGH.
-	-Read the six input pins according to the table (LOW = the button is being pressed).
-	-After the loop, wait at least 1.5ms (16.6 ms is better) so that the controller can reset.
+     SEL out D5 in  D4 in  D3 in  D2 in  D1 in  D0 in
+     LO      Start  A      0      0      Down   Up    (D2 and D3 == LOW indicate the presence of a controller)
+     HI      C      B      Right  Left   Down   Up
+
+    The 6-Button Controller
+    The logic works as follows:
+    The controller's state is maintained by a counter with 8 values (0-7).
+    - When the select pin changes (HIGH to LOW or LOW to HIGH) the counter increments.
+    - If more than 1.5 ms elapses with no change in the select pin, then the counter resets to 0.
+    - Most games run at 60 frames per second and read the controller only once per frame. Reading just once every 16.6 ms gives enough time for the counter to reset to 0 before the next frame.
+    - The first 4 states (0-3) report buttons like a 3-button controller. Games programmed to read a 3-button controller once per frame still work as expected.
+    - The 5th state (4) reports that the controller is in fact a 6-button controller.
+    - The 6th state (5) reports the buttons X, Y, Z and MODE.
+    - The last two states (6-7) can be ignored for official controllers.
+
+    Reading the 6-Button Controller
+    - Loop through each state (0-7).
+    - If the state is even, output LOW to the select pin. If it's odd, output HIGH.
+    - Read the six input pins according to the table (LOW = the button is being pressed).
+    - After the loop, wait at least 1.5ms (16.6 ms is better) so that the controller can reset.
+
+    Cycle  SEL out D5 in  D4 in  D3 in  D2 in  D1 in  D0 in
+    0      LO      Start  A      0      0      Down   Up
+    1      HI      C      B      Right  Left   Down   Up
+    2      LO      Start  A      0      0      Down   Up      (Check connected and read Start and A in this cycle)
+    3      HI      C      B      Right  Left   Down   Up      (Read B, C and directions in this cycle)
+    4      LO      Start  A      0      0      0      0       (Check for six button controller in this cycle (D0 and D1 == LOW))
+    5      HI      C      B      Mode   X      Y      Z       (Read X,Y,Z and Mode in this cycle)
+    6      LO      ---    ---    ---    ---    ---    Home    (Home only for 8bitdo wireless gamepads)
+    7      HI      ---    ---    ---    ---    ---    ---
 */
 void gamepads_query2()
 {
-  // "Normal" Six button controller reading routine, done a bit differently in this project
-  // Cycle  TH out  TR in  TL in  D3 in  D2 in  D1 in  D0 in
-  // 0      LO      Start  A      0      0      Down   Up
-  // 1      HI      C      B      Right  Left   Down   Up
-  // 2      LO      Start  A      0      0      Down   Up      (Check connected and read Start and A in this cycle)
-  // 3      HI      C      B      Right  Left   Down   Up      (Read B, C and directions in this cycle)
-  // 4      LO      Start  A      0      0      0      0       (Check for six button controller in this cycle)
-  // 5      HI      C      B      Mode   X      Y      Z       (Read X,Y,Z and Mode in this cycle)
-  // 6      LO      ---    ---    ---    ---    ---    Home    (Home only for 8bitdo wireless gamepads)
-  // 7      HI      ---    ---    ---    ---    ---    ---
-
 	struct State
 	{
 		bool pinSelect;
