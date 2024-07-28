@@ -26,6 +26,8 @@ Assembled board preview without Wiimote connector:
 
 ## Fuses 
 
+[Bits configuration](images/fuses.png)
+
 * Low fuse: 0xC4
 * High fuse: 0xD9
 
