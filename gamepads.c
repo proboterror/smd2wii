@@ -29,6 +29,14 @@ void gamepads_init()
 	memset((void*)&smd1, 0, sizeof(smd1));
 }
 
+/*
+	References:
+	https://www.raspberryfield.life/2019/03/25/sega-mega-drive-genesis-6-button-xyz-controller/
+	https://segaretro.org/Six_Button_Control_Pad_(Mega_Drive)
+	https://segaretro.org/File:Genesis_Software_Manual.pdf
+	Questionable:
+	https://segaretro.org/Sega_Mega_Drive/Control_pad_inputs
+*/
 void gamepads_query()
 {
 	uint8_t b;
@@ -60,16 +68,32 @@ void gamepads_query()
 	// Fixed: 8 iterations for read controller state.
 	for (b = 0; b < 8; b++)
 	{
-		// Note: were can be enough CPU ticks in loop cycle without additional delay (8MHz, unoptimized loop).
-		//_delay_us(10); // short delay to stabilise outputs in controller
+/*
+	Genesis Software Manual (C) 1989 Sega of Japan:
+	Genesis Technical Bulletin #27 January 24, 1994:
 
-		sega_d1[b] = ((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN0)&1)
-			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN1)&1) << 1)
-			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN2)&1) << 2)
-			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN3)&1) << 3)
-			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN4)&1) << 4)
-			| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN5)&1) << 5)
-			| (((PIN(SMD_SELECT_PORT)>>SMD_SELECT_PIN)&1) << 7);
+	1. Warning regarding control pad data reads
+
+	For both the 3 and 6 button pads, the pad data is determined 2usec after TH is modified.
+	Therefore, as shown in the sample below, read data from the pad 2usec (4 nop's) after TH is modified.
+
+	Joypad Reads
+
+	Pad data from the 3 and 6 button controllers are read 2usec after TH is modified.
+	The wait is necessary because the data in the chip needs time to stabilize after TH is modified.
+	If data is read without this wait, there is no guarantee that the data will be correct.
+
+	Moreover, the 2usec time is equivalent to 4 nop, including the 68000's prefetch.
+*/
+		_delay_us(2); // Short delay to stabilise outputs in controller.
+
+		sega_d1[b] =   ((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN0)&1)
+					| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN1)&1) << 1)
+					| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN2)&1) << 2)
+					| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN3)&1) << 3)
+					| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN4)&1) << 4)
+					| (((PIN(SMD1_DATA_PORT)>>SMD1_DATA_PIN5)&1) << 5)
+					| (((PIN(SMD_SELECT_PORT)>>SMD_SELECT_PIN)&1) << 7);
 
 		PORT(SMD_SELECT_PORT) ^= (1 << SMD_SELECT_PIN);
 	}
