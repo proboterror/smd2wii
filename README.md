@@ -84,8 +84,7 @@ void gamepads_query()
 	// 8 iterations for read controller state.
 	for (b = 0; b < 8; b++)
 	{
-		// Were can be enough CPU ticks in loop cycle without additional delay
-		// for short delay to stabilize outputs in controller (needs to be tested with different controllers)
+		_delay_us(2); // Short delay to stabilise outputs in controller.
 		...read pad pins
 		...invert SELECT pin
 	}
